@@ -24,7 +24,8 @@ class YTDLError(Exception):
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
-    YTDL_OPTIONS = {
+    YTDL_OPTIONS = 
+    {
         'format': 'bestaudio/best',
         'extractaudio': True,
         'audioformat': 'mp3',
@@ -40,7 +41,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'source_address': '0.0.0.0',
     }
 
-    FFMPEG_OPTIONS = {
+    FFMPEG_OPTIONS =
+    {
         'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
         'options': '-vn',
     }
@@ -80,7 +82,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         data = await loop.run_in_executor(None, partial)
 
         if data is None:
-            raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
+            raise YTDLError('Pailam na vatija `{}`'.format(search))
 
         if 'entries' not in data:
             process_info = data
@@ -92,7 +94,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                     break
 
             if process_info is None:
-                raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
+                raise YTDLError('Pailam na vatija `{}`'.format(search))
 
         webpage_url = process_info['webpage_url']
         partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
@@ -109,7 +111,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 try:
                     info = processed_info['entries'].pop(0)
                 except IndexError:
-                    raise YTDLError('Couldn\'t retrieve any matches for `{}`'.format(webpage_url))
+                    raise YTDLError('Pailam na vatija `{}`'.format(webpage_url))
 
         return cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
 
@@ -144,7 +146,7 @@ class Song:
                                description='```css\n{0.source.title}\n```'.format(self),
                                color=discord.Color.blurple())
                  .add_field(name='Duration', value=self.source.duration)
-                 .add_field(name='Requested by', value=self.requester.mention)
+                 .add_field(name='Hunte chaise', value=self.requester.mention)
                  .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
                  .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
                  .set_thumbnail(url=self.source.thumbnail))
@@ -275,7 +277,7 @@ class Music(commands.Cog):
 
     def cog_check(self, ctx: commands.Context):
         if not ctx.guild:
-            raise commands.NoPrivateMessage('This command can\'t be used in DM channels.')
+            raise commands.NoPrivateMessage('Music e command dao vatija. Hisab bujho na? dudu khao?')
 
         return True
 
@@ -292,6 +294,7 @@ class Music(commands.Cog):
         destination = ctx.author.voice.channel
         if ctx.voice_state.voice:
             await ctx.voice_state.voice.move_to(destination)
+            await ctx.send('Aho vatija aho')
             return
 
         ctx.voice_state.voice = await destination.connect()
@@ -305,11 +308,12 @@ class Music(commands.Cog):
         """
 
         if not channel and not ctx.author.voice:
-            raise VoiceError('You are neither connected to a voice channel nor specified a channel to join.')
+            raise VoiceError('Vatija tumi voice channel e nai.')
 
         destination = channel or ctx.author.voice.channel
         if ctx.voice_state.voice:
             await ctx.voice_state.voice.move_to(destination)
+            await ctx.send('Aho vatija aho')
             return
 
         ctx.voice_state.voice = await destination.connect()
@@ -320,23 +324,10 @@ class Music(commands.Cog):
         """Clears the queue and leaves the voice channel."""
 
         if not ctx.voice_state.voice:
-            return await ctx.send('Not connected to any voice channel.')
+            return await ctx.send('Vatija tumi voice channel e nai.')
 
         await ctx.voice_state.stop()
         del self.voice_states[ctx.guild.id]
-
-    @commands.command(name='volume')
-    async def _volume(self, ctx: commands.Context, *, volume: int):
-        """Sets the volume of the player."""
-
-        if not ctx.voice_state.is_playing:
-            return await ctx.send('Nothing being played at the moment.')
-
-        if 0 > volume > 100:
-            return await ctx.send('Volume must be between 0 and 100')
-
-        ctx.voice_state.volume = volume / 100
-        await ctx.send('Volume of the player set to {}%'.format(volume))
 
     @commands.command(name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
@@ -380,7 +371,7 @@ class Music(commands.Cog):
         """
 
         if not ctx.voice_state.is_playing:
-            return await ctx.send('Not playing any music right now...')
+            return await ctx.send('Kisu play hocche na ahon vatija...')
 
         voter = ctx.message.author
         if voter == ctx.voice_state.current.requester:
@@ -391,14 +382,14 @@ class Music(commands.Cog):
             ctx.voice_state.skip_votes.add(voter.id)
             total_votes = len(ctx.voice_state.skip_votes)
 
-            if total_votes >= 3:
+            if total_votes >= 1:
                 await ctx.message.add_reaction('⏭')
                 ctx.voice_state.skip()
             else:
                 await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
 
         else:
-            await ctx.send('You have already voted to skip this song.')
+            await ctx.send('Vatija skip krte diso to eida agei.')
 
     @commands.command(name='queue')
     async def _queue(self, ctx: commands.Context, *, page: int = 1):
@@ -408,7 +399,7 @@ class Music(commands.Cog):
         """
 
         if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('Empty queue.')
+            return await ctx.send('Queue khali vatija. ')
 
         items_per_page = 10
         pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
@@ -429,7 +420,7 @@ class Music(commands.Cog):
         """Shuffles the queue."""
 
         if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('Empty queue.')
+            return await ctx.send('Queue khali vatija.')
 
         ctx.voice_state.songs.shuffle()
         await ctx.message.add_reaction('✅')
@@ -439,7 +430,7 @@ class Music(commands.Cog):
         """Removes a song from the queue at a given index."""
 
         if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('Empty queue.')
+            return await ctx.send('Queue khali vatija.')
 
         ctx.voice_state.songs.remove(index - 1)
         await ctx.message.add_reaction('✅')
@@ -452,7 +443,7 @@ class Music(commands.Cog):
         """
 
         if not ctx.voice_state.is_playing:
-            return await ctx.send('Nothing being played at the moment.')
+            return await ctx.send('Kisu ehon play hocche na vatija.')
 
         # Inverse boolean value to loop and unloop.
         ctx.voice_state.loop = not ctx.voice_state.loop
@@ -476,25 +467,26 @@ class Music(commands.Cog):
             try:
                 source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
             except YTDLError as e:
-                await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
+                await ctx.send('Eida play hoy na vatija: {}'.format(str(e)))
             else:
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
+                await ctx.send('Nao vatija huno.')
 
     @_join.before_invoke
     @_play.before_invoke
     async def ensure_voice_state(self, ctx: commands.Context):
         if not ctx.author.voice or not ctx.author.voice.channel:
-            raise commands.CommandError('You are not connected to any voice channel.')
+            raise commands.CommandError('Vatija tumi voice channel e nai.')
 
         if ctx.voice_client:
             if ctx.voice_client.channel != ctx.author.voice.channel:
-                raise commands.CommandError('Bot is already in a voice channel.')
+                raise commands.CommandError('Vatija ami voice channel e asi to!')
 
 
-bot = commands.Bot(command_prefix='-')
+bot = commands.Bot(command_prefix='kaka ')
 bot.add_cog(Music(bot))
 
 
