@@ -1,9 +1,9 @@
 import discord
-#import requests
-#import json
 from discord.ext import commands
-
+import youtube_dl
+import os
 import nest_asyncio
+from keep_alive import keep_alive 
 nest_asyncio.apply()
 
 client = commands.Bot(command_prefix='-')
@@ -11,7 +11,7 @@ client = commands.Bot(command_prefix='-')
 
 @client.event
 async def on_ready():
-    print('Logged in as {0.user}'.format(client))
+    print('Logged as {0.user}'.format(client))
     
     
 @client.event
@@ -35,7 +35,32 @@ async def join(ctx):
         await ctx.send("Vatija tumi voice channel e nai,\n You must be in a voice channel to run this command")
             
 
+@client.command()
+async def play(ctx, url : str):
+    song_there = os.path.isfile("song.mp3")
+    try:
+        if song_there:
+            os.remove("song.mp3")
+    except PermissionError:
+        await ctx.send("Wait for the current playing music to end or use the 'stop' command")
+        return
+        
+    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
 
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '320',
+        }],
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+    for file in os.listdir("./"):
+        if file.endswith(".mp3"):
+            os.rename(file, "song.mp3")
+    voice.play(discord.FFmpegPCMAudio("song.mp3"))
     
 @client.command(pass_context = True)
 async def leave(ctx):
@@ -46,6 +71,7 @@ async def leave(ctx):
     
     else:
         await ctx.send("Ami ghumaitasi vatija")
-          
+my_secret = os.environ['TOKEN']
 
-client.run('ODg3NzA3ODU1MDU3MjA3MzU3.YUIEXQ.DMtNn64HImdC4Ei47lMdnH7-l7U')
+keep_alive()
+client.run(my_secret)
