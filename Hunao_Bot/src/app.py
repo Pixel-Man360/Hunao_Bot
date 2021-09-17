@@ -24,8 +24,7 @@ class YTDLError(Exception):
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
-    YTDL_OPTIONS = 
-    {
+    YTDL_OPTIONS = {
         'format': 'bestaudio/best',
         'extractaudio': True,
         'audioformat': 'mp3',
@@ -46,8 +45,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         }],
     }
 
-    FFMPEG_OPTIONS =
-    {
+    FFMPEG_OPTIONS = {
         'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
         'options': '-vn',
     }
