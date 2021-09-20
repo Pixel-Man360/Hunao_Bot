@@ -1,5 +1,5 @@
-import youtube_dl
-import YTDLSource
+import discord
+from YTDLSource import YTDLSource
 
 class Song:
     __slots__ = ('source', 'requester')

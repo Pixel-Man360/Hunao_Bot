@@ -12,8 +12,8 @@ from discord.ext import commands
 from keep_alive import keep_alive
 
 
-import Song
-import YTDLSource
+from Song import Song
+from YTDLSource import YTDLSource
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''

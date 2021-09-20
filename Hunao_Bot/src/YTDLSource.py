@@ -1,6 +1,7 @@
 import asyncio
 import youtube_dl
 import discord
+import functools
 from discord.ext import commands
 class YTDLSource(discord.PCMVolumeTransformer):
     YTDL_OPTIONS = {
