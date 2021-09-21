@@ -3,6 +3,13 @@ import youtube_dl
 import discord
 import functools
 from discord.ext import commands
+
+
+
+class YTDLError(Exception):
+    pass
+
+
 class YTDLSource(discord.PCMVolumeTransformer):
     YTDL_OPTIONS = {
         'format': 'bestaudio/best',
