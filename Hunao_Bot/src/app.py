@@ -21,7 +21,7 @@ async def on_ready():
     
 @bot.event
 async def on_message(message):
-     command = message.content.spilt()
+     command = message.content.split()
      command[0].lower()
      command[1].lower()
      message.content = command
