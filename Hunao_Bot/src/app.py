@@ -20,11 +20,10 @@ async def on_ready():
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
     
 @bot.event
-async def on_message(self, message):
-  ctx = await self.get_context(message)
-  if ctx.prefix is not None:
-    ctx.command = self.commands.get(ctx.invoked_with.lower())
-    await self.invoke(ctx)
+async def on_message(message):
+     message.content = message.content.lower()
+     await bot.process_commands(message)
+    
 keep_alive()
 bot.run(os.getenv("TOKEN"))
 
