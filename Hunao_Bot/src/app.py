@@ -24,7 +24,7 @@ async def on_message(message):
      command = message.content.split()
      command[0].lower()
      command[1].lower()
-     message.content = command
+     message.content = " ".join(command)
      await bot.process_commands(message)
     
 keep_alive()
