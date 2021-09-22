@@ -191,7 +191,7 @@ class Music(commands.Cog):
             return await ctx.send('Kisu ehon play hocche na vatija.')
 
         # Inverse boolean value to loop and unloop.
-        ctx.voice_state.loop = not ctx.voice_state.loop
+        ctx.voice_state = not ctx.voice_state.loop
         await ctx.message.add_reaction('✅')
 
     @commands.command(name='play')
@@ -217,7 +217,7 @@ class Music(commands.Cog):
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
-                await ctx.send('Enqueued {}'.format(str(source)))
+                await ctx.send('Queue te vorsi {}'.format(str(source)))
                 await ctx.send('Aho vatija aho. Huno tumar gan.')
 
     @_join.before_invoke
