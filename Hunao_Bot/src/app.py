@@ -22,9 +22,10 @@ async def on_ready():
 @bot.event
 async def on_message(message):
      command = message.content.split()
-     command[0].lower()
-     command[1].lower()
-     message.content = " ".join(command)
+     command[0] = command[0].lower()
+     command[1] = command[1].lower()
+     newCommand = " ".join(command)
+     message.content = newCommand
      await bot.process_commands(message)
     
 keep_alive()
