@@ -18,11 +18,14 @@ bot.add_cog(Music(bot))
 @bot.event
 async def on_ready():
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
-keep_alive()
-bot.run(os.getenv("TOKEN"))
-
+    
+@bot.event
 async def on_message(self, message):
   ctx = await self.get_context(message)
   if ctx.prefix is not None:
     ctx.command = self.commands.get(ctx.invoked_with.lower())
     await self.invoke(ctx)
+keep_alive()
+bot.run(os.getenv("TOKEN"))
+
+
